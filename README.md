@@ -19,3 +19,21 @@ The application follows a simple web application architecture with three main co
 
 ## Setup
 Clone the repository and install dependencies.
+
+### Frontend
+The React frontend lives in `client/` and uses Vite.
+
+1. Open a terminal in `Aztec-Housing-Hub/client`
+2. Run `npm.cmd install`
+3. Run `npm.cmd run dev`
+
+### Sprint 1 Homepage
+The homepage currently includes:
+
+- A polished SDSU-focused landing page
+- A hero section introducing Aztec Housing Hub
+- Static preview content for a future housing search experience
+- Feature and workflow sections for the initial project presentation
+
+The current version is intentionally simple and frontend-focused so the project
+has a strong first commit without adding unnecessary backend complexity.
