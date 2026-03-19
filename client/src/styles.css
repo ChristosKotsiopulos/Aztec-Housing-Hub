@@ -149,10 +149,36 @@ img {
   margin-bottom: 1rem;
 }
 
-.listing-grid,
-.feature-grid {
-  display: grid;
+.listings-section h4 {
+  margin: 1rem 0 0.5rem;
+  color: var(--accent);
+  font-size: 1.25rem;
+}
+
+.tabs {
+  display: flex;
   gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab-button {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--border);
+  background: #f9f9f9;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.tab-button:hover {
+  background: #e9e9e9;
+}
+
+.tab-button.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
 }
 
 .listing-grid {
@@ -168,6 +194,39 @@ img {
   padding: 1rem;
   border: 1px solid var(--border);
   background: #fcfcfc;
+}
+
+.housing-table-wrap {
+  overflow-x: auto;
+}
+
+.housing-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0 1rem;
+}
+
+.housing-table th,
+.housing-table td {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.housing-table th {
+  background: rgba(157, 34, 53, 0.08);
+}
+
+.housing-subtitle {
+  margin: 0.25rem 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.housing-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .feature-card ul {
