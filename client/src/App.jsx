@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./styles.css";
 import sdsuLogo from "./assets/sdsulogo.jpg";
 import Listings from "./components/Listings";
+import AddListing from "./components/AddListing";
 
 const navLinks = ["Home", "Listings", "Add Listing", "Profile", "Roommates", "Login"];
 const apiBaseUrl = "http://127.0.0.1:5000";
@@ -396,6 +397,7 @@ function AuthPage({
 export default function App() {
   const [activeTab, setActiveTab] = useState("on-campus");
   const [currentPage, setCurrentPage] = useState("home");
+  const [subleaseListings, setSubleaseListings] = useState([]);
   const [authMode, setAuthMode] = useState("login");
   const [signupForm, setSignupForm] = useState(emptySignupForm);
   const [loginForm, setLoginForm] = useState(emptyLoginForm);
@@ -410,6 +412,18 @@ export default function App() {
     setGlobalMessage({ type: "", text: "" });
   }
 
+  function handleAddSublease(sublease) {
+    setSubleaseListings((current) => [
+      {
+        ...sublease,
+        id: Date.now(),
+        type: "Sublease",
+      },
+      ...current,
+    ]);
+    setCurrentPage("listings");
+  }
+
   function handleNavClick(event, link) {
     event.preventDefault();
     clearMessages();
@@ -422,6 +436,11 @@ export default function App() {
 
     if (link === "Listings") {
       setCurrentPage("listings");
+      return;
+    }
+
+    if (link === "Add Listing") {
+      setCurrentPage("add-listing");
       return;
     }
 
@@ -652,6 +671,7 @@ export default function App() {
               const isActive =
                 (link === "Home" && currentPage === "home") ||
                 (link === "Listings" && currentPage === "listings") ||
+                (link === "Add Listing" && currentPage === "add-listing") ||
                 (link === "Login" && currentPage === "auth");
 
               return (
@@ -671,7 +691,13 @@ export default function App() {
 
       {currentPage === "listings" && (
         <main className="page-content">
-          <Listings />
+          <Listings subleaseListings={subleaseListings} />
+        </main>
+      )}
+
+      {currentPage === "add-listing" && (
+        <main className="page-content">
+          <AddListing onAddSublease={handleAddSublease} />
         </main>
       )}
 

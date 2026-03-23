@@ -113,8 +113,10 @@ img {
   cursor: pointer;
 }
 
-.top-nav a.nav-active {
+.top-nav .nav-active {
   color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .account-menu-trigger.nav-active {
@@ -651,6 +653,71 @@ img {
   font-size: 1rem;
 }
 
+.sublease-hub {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #edd7dc;
+  background: #fff8f9;
+}
+
+.sublease-hub h3 {
+  margin: 0 0 0.5rem;
+}
+
+.add-listing-page {
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+}
+
+.add-listing-form {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.add-listing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.add-listing-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.add-listing-form input,
+.add-listing-form select,
+.add-listing-form textarea {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.add-listing-form textarea {
+  resize: vertical;
+}
+
+.form-message {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.form-message.error {
+  color: #b3261e;
+}
+
+.form-message.success {
+  color: #1b5e20;
+}
+
 /* ── Responsive ── */
 @media (max-width: 640px) {
   .filter-row {
@@ -658,6 +725,10 @@ img {
   }
 
   .listing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .add-listing-grid {
     grid-template-columns: 1fr;
   }
 }
