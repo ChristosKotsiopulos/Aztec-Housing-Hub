@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./styles.css";
 import sdsuLogo from "./assets/sdsulogo.jpg";
 import Listings from "./components/Listings";
+import AddListing from "./components/AddListing";
 
 const navLinks = ["Home", "Listings", "Add Listing", "Profile", "Roommates", "Login"];
 
@@ -173,6 +174,19 @@ const offCampusListings = [
 export default function App() {
   const [activeTab, setActiveTab] = useState("on-campus");
   const [currentPage, setCurrentPage] = useState("home");
+  const [subleaseListings, setSubleaseListings] = useState([]);
+
+  const handleAddSublease = (sublease) => {
+    setSubleaseListings((prev) => [
+      {
+        ...sublease,
+        id: Date.now(),
+        type: "Sublease",
+      },
+      ...prev,
+    ]);
+    setCurrentPage("listings");
+  };
 
   return (
     <div className="app-shell">
@@ -193,7 +207,8 @@ export default function App() {
                 key={link}
                 className={
                   (link === "Home" && currentPage === "home") ||
-                  (link === "Listings" && currentPage === "listings")
+                  (link === "Listings" && currentPage === "listings") ||
+                  (link === "Add Listing" && currentPage === "add-listing")
                     ? "nav-active"
                     : ""
                 }
@@ -201,6 +216,7 @@ export default function App() {
                   event.preventDefault();
                   if (link === "Home") setCurrentPage("home");
                   else if (link === "Listings") setCurrentPage("listings");
+                  else if (link === "Add Listing") setCurrentPage("add-listing");
                 }}
               >
                 {link}
@@ -213,7 +229,13 @@ export default function App() {
       {/* ── PAGE: Listings ── */}
       {currentPage === "listings" && (
         <main className="page-content">
-          <Listings />
+          <Listings subleaseListings={subleaseListings} />
+        </main>
+      )}
+
+      {currentPage === "add-listing" && (
+        <main className="page-content">
+          <AddListing onAddSublease={handleAddSublease} />
         </main>
       )}
 

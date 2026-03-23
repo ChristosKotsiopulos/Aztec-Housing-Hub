@@ -117,14 +117,16 @@ const priceRanges = [
 ];
 const bedOptions = ["Any", "1", "2", "3", "4+"];
 
-export default function Listings() {
+export default function Listings({ subleaseListings = [] }) {
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState("All");
   const [selectedPrice, setSelectedPrice] = useState(0);
   const [selectedBeds, setSelectedBeds] = useState("Any");
   const [expandedId, setExpandedId] = useState(null);
 
-  const filtered = offCampusListings.filter((listing) => {
+  const allListings = [...subleaseListings, ...offCampusListings];
+
+  const filtered = allListings.filter((listing) => {
     const matchesSearch =
       listing.title.toLowerCase().includes(search.toLowerCase()) ||
       listing.area.toLowerCase().includes(search.toLowerCase()) ||
@@ -155,6 +157,35 @@ export default function Listings() {
           near SDSU
         </p>
       </div>
+
+      {subleaseListings.length > 0 && (
+        <div className="sublease-hub">
+          <h3>Sublease Hub</h3>
+          <p className="listings-page-subtitle">
+            {subleaseListings.length} student sublease post
+            {subleaseListings.length !== 1 ? "s" : ""} in one place
+          </p>
+          <div className="listing-grid">
+            {subleaseListings.map((listing) => (
+              <article className="listing-card" key={listing.id}>
+                <div className="card-type-badge">Sublease</div>
+                <h4>{listing.title}</h4>
+                <p className="card-price">
+                  ${listing.price.toLocaleString()} / month
+                </p>
+                <p className="card-meta">
+                  {listing.area} &bull; {listing.distance} mi from campus
+                </p>
+                <p className="card-meta">
+                  {listing.beds} Bed / {listing.baths} Bath
+                </p>
+                <p className="card-availability">{listing.availability}</p>
+                <p className="card-description">{listing.description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ── Filters ── */}
       <div className="filters-bar">
