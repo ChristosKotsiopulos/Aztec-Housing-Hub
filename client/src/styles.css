@@ -384,7 +384,20 @@ img {
   font-size: 0.95rem;
 }
 
+.auth-field select {
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: white;
+}
+
 .auth-field input:focus {
+  outline: 2px solid rgba(157, 34, 53, 0.15);
+  border-color: var(--accent);
+}
+
+.auth-field select:focus {
   outline: 2px solid rgba(157, 34, 53, 0.15);
   border-color: var(--accent);
 }
@@ -718,6 +731,41 @@ img {
   color: #1b5e20;
 }
 
+.roommate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-save-btn {
+  max-width: 220px;
+}
+
+.profile-save-message {
+  margin: 1rem 0 0;
+  color: #1b5e20;
+  font-weight: 600;
+}
+
+.roommate-filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.roommate-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.roommate-common-hobbies {
+  margin: 0.55rem 0 0;
+  color: var(--accent);
+  font-weight: 600;
+}
+
 /* ── Responsive ── */
 @media (max-width: 640px) {
   .filter-row {
@@ -729,6 +777,11 @@ img {
   }
 
   .add-listing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .roommate-filters,
+  .roommate-grid {
     grid-template-columns: 1fr;
   }
 }

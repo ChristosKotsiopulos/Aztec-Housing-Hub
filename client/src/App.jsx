@@ -186,8 +186,88 @@ const emptyLoginForm = {
   password: "",
 };
 
+const emptyProfileForm = {
+  hobbies: "",
+  cleanliness: "Moderately clean",
+  sleepSchedule: "Night owl",
+};
+
+const roommateProfiles = [
+  {
+    id: 1,
+    name: "Maya R.",
+    major: "Public Health",
+    hobbies: ["gym", "hiking", "cooking"],
+    cleanliness: "Very clean",
+    sleepSchedule: "Early sleeper",
+    bio: "I like calm weekdays and active weekends.",
+  },
+  {
+    id: 2,
+    name: "Jordan T.",
+    major: "Computer Science",
+    hobbies: ["gaming", "basketball", "music"],
+    cleanliness: "Moderately clean",
+    sleepSchedule: "Night owl",
+    bio: "Usually up late working on projects and gaming.",
+  },
+  {
+    id: 3,
+    name: "Leslie M.",
+    major: "Business",
+    hobbies: ["reading", "coffee", "yoga"],
+    cleanliness: "Very clean",
+    sleepSchedule: "Balanced",
+    bio: "Looking for a respectful and organized roommate setup.",
+  },
+  {
+    id: 4,
+    name: "Sam K.",
+    major: "Mechanical Engineering",
+    hobbies: ["soccer", "cars", "gym"],
+    cleanliness: "Flexible",
+    sleepSchedule: "Night owl",
+    bio: "Easygoing and social, mostly studying in evenings.",
+  },
+];
+
 function validateSdsuEmail(email) {
   return /^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)*sdsu\.edu$/i.test(email.trim());
+}
+
+function normalizeHobbies(hobbies) {
+  return hobbies
+    .split(",")
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function calculateCompatibility(userProfile, candidate) {
+  let score = 0;
+
+  if (userProfile.cleanliness === candidate.cleanliness) {
+    score += 40;
+  } else if (
+    userProfile.cleanliness === "Moderately clean" ||
+    candidate.cleanliness === "Moderately clean"
+  ) {
+    score += 20;
+  }
+
+  if (userProfile.sleepSchedule === candidate.sleepSchedule) {
+    score += 35;
+  } else if (userProfile.sleepSchedule === "Balanced" || candidate.sleepSchedule === "Balanced") {
+    score += 20;
+  }
+
+  const userHobbies = normalizeHobbies(userProfile.hobbies);
+  const commonHobbies = candidate.hobbies.filter((hobby) => userHobbies.includes(hobby));
+  score += Math.min(commonHobbies.length * 15, 25);
+
+  return {
+    score: Math.min(score, 100),
+    commonHobbies,
+  };
 }
 
 function AuthPage({
@@ -394,6 +474,176 @@ function AuthPage({
   );
 }
 
+function ProfilePage({ profileForm, setProfileForm, onSave, saveMessage }) {
+  return (
+    <main className="page-content">
+      <section className="section-block">
+        <div className="section-heading">
+          <p className="eyebrow">Roommate Profile</p>
+          <h3>Set your preferences</h3>
+        </div>
+
+        <form className="roommate-form" onSubmit={onSave}>
+          <label className="auth-field">
+            <span>Hobbies (comma-separated)</span>
+            <input
+              type="text"
+              value={profileForm.hobbies}
+              onChange={(event) =>
+                setProfileForm((current) => ({ ...current, hobbies: event.target.value }))
+              }
+              placeholder="gym, cooking, gaming"
+            />
+          </label>
+
+          <div className="auth-form-grid">
+            <label className="auth-field">
+              <span>Cleanliness</span>
+              <select
+                value={profileForm.cleanliness}
+                onChange={(event) =>
+                  setProfileForm((current) => ({ ...current, cleanliness: event.target.value }))
+                }
+              >
+                <option>Very clean</option>
+                <option>Moderately clean</option>
+                <option>Flexible</option>
+              </select>
+            </label>
+
+            <label className="auth-field">
+              <span>Sleep schedule</span>
+              <select
+                value={profileForm.sleepSchedule}
+                onChange={(event) =>
+                  setProfileForm((current) => ({ ...current, sleepSchedule: event.target.value }))
+                }
+              >
+                <option>Early sleeper</option>
+                <option>Balanced</option>
+                <option>Night owl</option>
+              </select>
+            </label>
+          </div>
+
+          <button className="auth-submit-btn profile-save-btn" type="submit">
+            Save profile
+          </button>
+        </form>
+
+        {saveMessage && <p className="profile-save-message">{saveMessage}</p>}
+      </section>
+    </main>
+  );
+}
+
+function RoommatesPage({ profileForm }) {
+  const [filterCleanliness, setFilterCleanliness] = useState("Any");
+  const [filterSleep, setFilterSleep] = useState("Any");
+  const [filterHobby, setFilterHobby] = useState("");
+  const [minimumMatch, setMinimumMatch] = useState(0);
+
+  const roommateMatches = roommateProfiles
+    .map((roommate) => {
+      const compatibility = calculateCompatibility(profileForm, roommate);
+      return {
+        ...roommate,
+        compatibilityScore: compatibility.score,
+        commonHobbies: compatibility.commonHobbies,
+      };
+    })
+    .filter((roommate) => {
+      const cleanlinessMatch =
+        filterCleanliness === "Any" || roommate.cleanliness === filterCleanliness;
+      const sleepMatch = filterSleep === "Any" || roommate.sleepSchedule === filterSleep;
+      const hobbyMatch =
+        !filterHobby.trim() ||
+        roommate.hobbies.some((hobby) => hobby.includes(filterHobby.trim().toLowerCase()));
+      const scoreMatch = roommate.compatibilityScore >= minimumMatch;
+      return cleanlinessMatch && sleepMatch && hobbyMatch && scoreMatch;
+    })
+    .sort((a, b) => b.compatibilityScore - a.compatibilityScore);
+
+  return (
+    <main className="page-content">
+      <section className="section-block">
+        <div className="section-heading">
+          <p className="eyebrow">Roommate Finder</p>
+          <h3>Filter similar roommates</h3>
+        </div>
+
+        <div className="roommate-filters">
+          <label className="auth-field">
+            <span>Cleanliness</span>
+            <select value={filterCleanliness} onChange={(event) => setFilterCleanliness(event.target.value)}>
+              <option>Any</option>
+              <option>Very clean</option>
+              <option>Moderately clean</option>
+              <option>Flexible</option>
+            </select>
+          </label>
+
+          <label className="auth-field">
+            <span>Sleep schedule</span>
+            <select value={filterSleep} onChange={(event) => setFilterSleep(event.target.value)}>
+              <option>Any</option>
+              <option>Early sleeper</option>
+              <option>Balanced</option>
+              <option>Night owl</option>
+            </select>
+          </label>
+
+          <label className="auth-field">
+            <span>Hobby keyword</span>
+            <input
+              type="text"
+              placeholder="e.g. gym"
+              value={filterHobby}
+              onChange={(event) => setFilterHobby(event.target.value)}
+            />
+          </label>
+
+          <label className="auth-field">
+            <span>Minimum match</span>
+            <select value={minimumMatch} onChange={(event) => setMinimumMatch(Number(event.target.value))}>
+              <option value={0}>Any</option>
+              <option value={40}>40%+</option>
+              <option value={60}>60%+</option>
+              <option value={80}>80%+</option>
+            </select>
+          </label>
+        </div>
+
+        <div className="roommate-grid">
+          {roommateMatches.length === 0 ? (
+            <article className="listing-card">
+              <h4>No roommates match these filters</h4>
+              <p className="hero-text">Try relaxing one of the filters to see more matches.</p>
+            </article>
+          ) : (
+            roommateMatches.map((roommate) => (
+              <article className="listing-card" key={roommate.id}>
+                <h4>{roommate.name}</h4>
+                <p className="card-meta">{roommate.major}</p>
+                <p className="card-price">Compatibility: {roommate.compatibilityScore}%</p>
+                <p className="card-meta">Cleanliness: {roommate.cleanliness}</p>
+                <p className="card-meta">Sleep: {roommate.sleepSchedule}</p>
+                <p className="card-meta">Hobbies: {roommate.hobbies.join(", ")}</p>
+                <p className="hero-text">{roommate.bio}</p>
+                {roommate.commonHobbies.length > 0 && (
+                  <p className="roommate-common-hobbies">
+                    Shared interests: {roommate.commonHobbies.join(", ")}
+                  </p>
+                )}
+              </article>
+            ))
+          )}
+        </div>
+      </section>
+    </main>
+  );
+}
+
 export default function App() {
   const [activeTab, setActiveTab] = useState("on-campus");
   const [currentPage, setCurrentPage] = useState("home");
@@ -407,6 +657,8 @@ export default function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const [profileForm, setProfileForm] = useState(emptyProfileForm);
+  const [profileSaveMessage, setProfileSaveMessage] = useState("");
 
   function clearMessages() {
     setGlobalMessage({ type: "", text: "" });
@@ -449,6 +701,25 @@ export default function App() {
         setCurrentPage("auth");
       }
       return;
+    }
+
+    if (link === "Profile") {
+      if (currentUser) {
+        setCurrentPage("profile");
+      } else {
+        setCurrentPage("auth");
+        setGlobalMessage({ type: "error", text: "Log in to edit your roommate profile." });
+      }
+      return;
+    }
+
+    if (link === "Roommates") {
+      if (currentUser) {
+        setCurrentPage("roommates");
+      } else {
+        setCurrentPage("auth");
+        setGlobalMessage({ type: "error", text: "Log in to browse roommate matches." });
+      }
     }
   }
 
@@ -625,6 +896,11 @@ export default function App() {
     }
   }
 
+  function handleProfileSave(event) {
+    event.preventDefault();
+    setProfileSaveMessage("Roommate profile saved.");
+  }
+
   return (
     <div className="app-shell">
       <header className="site-header">
@@ -672,6 +948,8 @@ export default function App() {
                 (link === "Home" && currentPage === "home") ||
                 (link === "Listings" && currentPage === "listings") ||
                 (link === "Add Listing" && currentPage === "add-listing") ||
+                (link === "Profile" && currentPage === "profile") ||
+                (link === "Roommates" && currentPage === "roommates") ||
                 (link === "Login" && currentPage === "auth");
 
               return (
@@ -722,6 +1000,17 @@ export default function App() {
           onLoginSubmit={handleLoginSubmit}
         />
       )}
+
+      {currentPage === "profile" && currentUser && (
+        <ProfilePage
+          profileForm={profileForm}
+          setProfileForm={setProfileForm}
+          onSave={handleProfileSave}
+          saveMessage={profileSaveMessage}
+        />
+      )}
+
+      {currentPage === "roommates" && currentUser && <RoommatesPage profileForm={profileForm} />}
 
       {currentPage === "home" && (
         <main className="page-content">
