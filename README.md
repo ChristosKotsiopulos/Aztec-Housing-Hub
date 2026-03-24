@@ -48,3 +48,8 @@ has a strong first commit without adding unnecessary backend complexity.
 - Working user login/sign up.
 - Stores user data safely and securely.
 - Connected the frontend to the backend.
+
+### Sprint 3 Profile + Roommate Matching
+- Added a Profile tab where logged-in users can enter roommate preferences such as hobbies, cleanliness, and sleep schedule.
+- Added a Roommates tab that shows potential roommate cards and compatibility scores.
+- Added roommate filters so users can find similar roommates by cleanliness, sleep schedule, hobby keyword, and minimum match percentage.
